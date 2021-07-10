@@ -30,7 +30,7 @@ namespace pu::ui::elm
             void SetName(String Name);
             Color GetColor();
             void SetColor(Color Color);
-            void AddOnClick(std::function<void()> Callback, u64 Key = KEY_A);
+            void AddOnClick(std::function<void()> Callback, u64 Key = SDL_CONTROLLER_BUTTON_A);
             i32 GetCallbackCount();
             std::function<void()> GetCallback(i32 Index);
             u64 GetCallbackKey(i32 Index);
@@ -78,7 +78,7 @@ namespace pu::ui::elm
             i32 GetSelectedIndex();
             void SetSelectedIndex(i32 Index);
             void OnRender(render::Renderer::Ref &Drawer, i32 X, i32 Y);
-            void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
+            void OnInput(SDL_Event&);
         private:
             void ReloadItemRenders();
             bool dtouch;

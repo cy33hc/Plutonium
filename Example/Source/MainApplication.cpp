@@ -23,9 +23,9 @@ void MainApplication::OnLoad()
     // Set a function when input is caught. This input handling will be the first one to be handled (before Layout or any Elements)
     // Using a lambda function here to simplify things
     // You can use member functions via std::bind() C++ wrapper
-    this->SetOnInput([&](u64 Down, u64 Up, u64 Held, pu::ui::Touch Pos)
+    this->SetOnInput([&](SDL_Event &e)
     {
-        if(Down & KEY_X) // If X is pressed, start with our dialog questions!
+        if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_X) // If X is pressed, start with our dialog questions!
         {
             int opt = this->CreateShowDialog("Question", "Do you like apples?", { "Yes!", "No...", "Cancel" }, true); // (using latest option as cancel option)
             if((opt == -1) || (opt == -2)) // -1 and -2 are similar, but if the user cancels manually -1 is set, other types or cancel should be -2.
@@ -45,9 +45,11 @@ void MainApplication::OnLoad()
                 }
             }
         }
+        /*
         else if(Down & KEY_PLUS) // If + is pressed, exit application
         {
             this->Close();
         }
+        */
     });
 }

@@ -143,11 +143,11 @@ namespace pu::ui::elm
         Drawer->RenderTexture(this->ntex, tx, ty);
     }
 
-    void Button::OnInput(u64 Down, u64 Up, u64 Held, Touch Pos)
+    void Button::OnInput(SDL_Event &e)
     {
         if(this->hover)
         {
-            if(Pos.IsEmpty())
+            if(e.type == SDL_FINGERUP)
             {
                 (this->clickcb)();
                 this->hover = false;
@@ -156,9 +156,9 @@ namespace pu::ui::elm
         }
         else
         {
-            if(!Pos.IsEmpty())
+            if(e.type == SDL_FINGERDOWN)
             {
-                if((Pos.X >= x) && (Pos.X < (x + w)) && (Pos.Y >= y) && (Pos.Y < (y + h)))
+                if((e.tfinger.x >= x) && (e.tfinger.x < (x + w)) && (e.tfinger.y >= y) && (e.tfinger.y < (y + h)))
                 {
                     this->hover = true;
                     this->hoverfact = 0;

@@ -1,4 +1,5 @@
 #include <pu/ui/ui_Application.hpp>
+#include <SDL2/SDL.h>
 
 namespace pu::ui
 {
@@ -7,7 +8,7 @@ namespace pu::ui
         this->rend = Renderer;
         this->rend->Initialize();
         this->show = false;
-        this->cbipt = [&](u64,u64,u64,Touch){};
+        this->cbipt = [&](SDL_Event&){};
         this->rover = false;
         this->ovl = nullptr;
         this->closefact = false;
@@ -34,7 +35,7 @@ namespace pu::ui
         this->thds.push_back(Callback);
     }
 
-    void Application::SetOnInput(std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> Callback)
+    void Application::SetOnInput(std::function<void(SDL_Event&)> Callback)
     {
         this->cbipt = Callback;
     }
@@ -158,12 +159,10 @@ namespace pu::ui
 
     void Application::OnRender()
     {
-        hidScanInput();
-        u64 d = hidKeysDown(CONTROLLER_P1_AUTO);
-        u64 u = hidKeysUp(CONTROLLER_P1_AUTO);
-        u64 h = hidKeysHeld(CONTROLLER_P1_AUTO);
-        u64 th = hidKeysDown(CONTROLLER_HANDHELD);
+        SDL_Event e;
+        SDL_PollEvent(&e);
         Touch tch = Touch::Empty;
+        /*
         if(th & KEY_TOUCH)
         {
             touchPosition nxtch;
@@ -171,22 +170,23 @@ namespace pu::ui
             tch.X = nxtch.px;
             tch.Y = nxtch.py;
         }
+        */
         auto simtch = this->lyt->GetSimulatedTouch();
         if(!simtch.IsEmpty()) tch = simtch;
         if(!this->thds.empty()) for(i32 i = 0; i < this->thds.size(); i++) (this->thds[i])();
         this->lyt->PreRender();
         auto lyth = this->lyt->GetAllThreads();
         if(!lyth.empty()) for(i32 i = 0; i < lyth.size(); i++) (lyth[i])();
-        if(!this->rover) (this->cbipt)(d, u, h, tch);
+        if(!this->rover) (this->cbipt)(e);
         if(this->lyt->HasBackgroundImage()) this->rend->RenderTexture(this->lyt->GetBackgroundImageTexture(), 0, 0);
-        if(!this->rover) (this->lyt->GetOnInput())(d, u, h, tch);
+        if(!this->rover) (this->lyt->GetOnInput())(e);
         if(this->lyt->HasChilds()) for(i32 i = 0; i < this->lyt->GetCount(); i++)
         {
             auto elm = this->lyt->At(i);
             if(elm->IsVisible())
             {
                 elm->OnRender(this->rend, elm->GetProcessedX(), elm->GetProcessedY());
-                if(!this->rover) elm->OnInput(d, u, h, tch);
+                if(!this->rover) elm->OnInput(e);
             }
         }
         if(this->ovl != nullptr)
@@ -200,7 +200,7 @@ namespace pu::ui
             }
             if(!rok) this->EndOverlay();
         }
-        this->rend->RenderRectangleFill({ 0, 0, 0, 255 - (u8)fadea }, 0, 0, 1280, 720);
+        this->rend->RenderRectangleFill({ 0, 0, 0, 255 - (u8)fadea }, 0, 0, 960, 544);
     }
 
     void Application::Close()

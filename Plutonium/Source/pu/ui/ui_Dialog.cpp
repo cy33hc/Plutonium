@@ -1,5 +1,6 @@
 #include <pu/ui/ui_Dialog.hpp>
 #include <pu/ui/ui_Application.hpp>
+#include <SDL2/SDL.h>
 #include <cmath>
 
 namespace pu::ui
@@ -88,7 +89,7 @@ namespace pu::ui
             i32 tw = render::GetTextWidth(this->ofont_name, this->sopts[i]);
             dw += tw + 20;
         }
-        if(dw > 1280) dw = 1280;
+        if(dw > 960) dw = 960;
         i32 icm = 30;
         i32 elemh = 60;
         i32 tdw = render::GetTextWidth(this->cfont_name, this->scnt) + 90;
@@ -105,11 +106,11 @@ namespace pu::ui
             tdw = render::GetTextWidth(this->tfont_name, this->stitle) + 90 + render::GetTextureWidth(this->icon) + 20;
             if(tdw > dw) dw = tdw;
         }
-        if(dw > 1280) dw = 1280;
+        if(dw > 960) dw = 960;
         i32 dh = ely + elemh + 30;
-        if(dh > 720) dh = 720;
-        i32 dx = (1280 - dw) / 2;
-        i32 dy = (720 - dh) / 2;
+        if(dh > 544) dh = 544;
+        i32 dx = (960 - dw) / 2;
+        i32 dy = (544 - dh) / 2;
         ely += dy;
         i32 elemw = ((dw - (20 * (this->opts.size() + 1))) / this->opts.size());
         i32 elx = dx + ((dw - ((elemw * this->opts.size()) + (20 * (this->opts.size() - 1)))) / 2);
@@ -119,13 +120,14 @@ namespace pu::ui
         i32 nb = 200;
         bool end = false;
         i32 initfact = 0;
+        SDL_Event e;
+
         while(true)
         {
             bool ok = reinterpret_cast<Application*>(App)->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool
             {
-                u64 k = hidKeysDown(CONTROLLER_P1_AUTO);
-                u64 h = hidKeysHeld(CONTROLLER_P1_AUTO);
-                if((k & KEY_DLEFT) || (k & KEY_LSTICK_LEFT) || (h & KEY_RSTICK_LEFT))
+                SDL_PollEvent(&e);
+                if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT)
                 {
                     if(this->osel > 0)
                     {
@@ -138,7 +140,7 @@ namespace pu::ui
                         }
                     }
                 }
-                else if((k & KEY_DRIGHT) || (k & KEY_LSTICK_RIGHT) || (h & KEY_RSTICK_RIGHT))
+                else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT)
                 {
                     if(this->osel < (this->opts.size() - 1))
                     {
@@ -151,16 +153,16 @@ namespace pu::ui
                         }
                     }
                 }
-                else if(k & KEY_A)
+                else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_B)
                 {
                     this->cancel = false;
                     end = true;
                 }
-                else if(k & KEY_B)
+                else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_A)
                 {
                     this->cancel = true;
                     end = true;
-                }
+                }/*
                 else if(hidKeysDown(CONTROLLER_HANDHELD) & KEY_TOUCH)
                 {
                     touchPosition tch;
@@ -177,7 +179,7 @@ namespace pu::ui
                             end = true;
                         }
                     }
-                }
+                }*/
                 i32 bw = dw;
                 i32 bh = dh;
                 i32 fw = bw - (r * 2);
@@ -186,7 +188,7 @@ namespace pu::ui
                 i32 aclr = initfact;
                 if(aclr < 0) aclr = 0;
                 if(aclr > 125) aclr = 125;
-                Drawer->RenderRectangleFill({ 0, 0, 0, (u8)aclr }, 0, 0, 1280, 720);
+                Drawer->RenderRectangleFill({ 0, 0, 0, (u8)aclr }, 0, 0, 960, 544);
                 Drawer->RenderRoundedRectangleFill(clr, dx, dy, bw, bh, r);
                 render::SetAlphaValue(this->title, initfact);
                 render::SetAlphaValue(this->cnt, initfact);

@@ -331,7 +331,7 @@ namespace pu::ui::elm
         }
     }
 
-    void Menu::OnInput(u64 Down, u64 Up, u64 Held, Touch Pos)
+    void Menu::OnInput(SDL_Event &e)
     {
         if(itms.empty()) return;
         if(basestatus == 1)
@@ -343,7 +343,7 @@ namespace pu::ui::elm
                 basestatus = 2;
             }
         }
-        if(!Pos.IsEmpty())
+        if(e.type == SDL_FINGERDOWN)
         {
             i32 cx = this->GetProcessedX();
             i32 cy = this->GetProcessedY();
@@ -354,7 +354,7 @@ namespace pu::ui::elm
             if((its + this->fisel) > this->itms.size()) its = this->itms.size() - this->fisel;
             for(i32 i = this->fisel; i < (this->fisel + its); i++)
             {
-                if(((cx + cw) > Pos.X) && (Pos.X > cx) && ((cy + ch) > Pos.Y) && (Pos.Y > cy))
+                if(((cx + cw) > e.tfinger.x) && (e.tfinger.x > cx) && ((cy + ch) > e.tfinger.y) && (e.tfinger.y > cy))
                 {
                     this->dtouch = true;
                     this->previsel = this->isel;
@@ -378,9 +378,10 @@ namespace pu::ui::elm
         }
         else
         {
-            if((Down & KEY_DDOWN) || (Down & KEY_LSTICK_DOWN) || (Held & KEY_RSTICK_DOWN))
+            if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN)
             {
                 bool move = true;
+                /*
                 if(Held & KEY_RSTICK_DOWN)
                 {
                     move = false;
@@ -395,6 +396,7 @@ namespace pu::ui::elm
                         move = true;
                     }
                 }
+                */
                 if(move)
                 {
                     if(this->isel < (this->itms.size() - 1))
@@ -429,9 +431,10 @@ namespace pu::ui::elm
                     }
                 }
             }
-            else if((Down & KEY_DUP) || (Down & KEY_LSTICK_UP) || (Held & KEY_RSTICK_UP))
+            else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP)
             {
                 bool move = true;
+                /*
                 if(Held & KEY_RSTICK_UP)
                 {
                     move = false;
@@ -446,6 +449,7 @@ namespace pu::ui::elm
                         move = true;
                     }
                 }
+                */
                 if(move)
                 {
                     if(this->isel > 0)
@@ -480,6 +484,7 @@ namespace pu::ui::elm
                     }
                 }
             }
+            /*
             else
             {
                 i32 ipc = this->itms[this->isel]->GetCallbackCount();
@@ -492,6 +497,7 @@ namespace pu::ui::elm
                     }
                 }
             }
+            */
         }
     }
     

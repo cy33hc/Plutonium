@@ -25,8 +25,8 @@ namespace pu::ui
             ~Layout();
 
             bool HasChilds();
-            void SetOnInput(std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> Callback);
-            std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> GetOnInput();
+            void SetOnInput(std::function<void(SDL_Event&)> Callback);
+            std::function<void(SDL_Event&)> GetOnInput();
             void AddThread(std::function<void()> Callback);
             std::vector<std::function<void()>> GetAllThreads();
             void SetBackgroundImage(std::string Path);
@@ -41,7 +41,7 @@ namespace pu::ui
             Color overbgcolor;
             Touch simtouch;
             sdl2::Texture overbgtex;
-            std::function<void(u64, u64, u64, Touch)> onipt;
+            std::function<void(SDL_Event&)> onipt;
             std::vector<std::function<void()>> thds;
     };
 }

@@ -133,8 +133,8 @@ namespace pu::ui::elm
         Drawer->RenderTexture(this->ntex, tx, ty);
     }
 
-    void Toggle::OnInput(u64 Down, u64 Up, u64 Held, Touch Pos)
+    void Toggle::OnInput(SDL_Event &e)
     {
-        if((Down & this->key) || ((this->key == KEY_TOUCH) && !Pos.IsEmpty())) this->checked = !this->checked;
+        if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_A) this->checked = !this->checked;
     }
 }

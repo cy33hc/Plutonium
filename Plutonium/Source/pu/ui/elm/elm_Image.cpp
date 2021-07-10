@@ -101,7 +101,7 @@ namespace pu::ui::elm
         Drawer->RenderTexture(this->ntex, X, Y, this->rendopts);
     }
 
-    void Image::OnInput(u64 Down, u64 Up, u64 Held, Touch Pos)
+    void Image::OnInput(SDL_Event &e)
     {
     }
 }

@@ -40,7 +40,7 @@ namespace pu::ui::elm
             void SetContentFont(String font_name);
             void SetOnClick(std::function<void()> ClickCallback);
             void OnRender(render::Renderer::Ref &Drawer, i32 X, i32 Y);
-            void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
+            void OnInput(SDL_Event&);
         private:
             i32 x;
             i32 y;

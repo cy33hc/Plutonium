@@ -12,8 +12,10 @@
 */
 
 #pragma once
+#include <pu/types.h>
 #include <pu/pu_Macros.hpp>
 #include <pu/ui/render/render_Renderer.hpp>
+#include <SDL2/SDL.h>
 
 namespace pu::ui::elm
 {
@@ -44,7 +46,7 @@ namespace pu::ui::elm
             virtual i32 GetWidth() = 0;
             virtual i32 GetHeight() = 0;
             virtual void OnRender(render::Renderer::Ref &Drawer, i32 X, i32 Y) = 0;
-            virtual void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos) = 0;
+            virtual void OnInput(SDL_Event&) = 0;
 
             bool IsVisible();
             void SetVisible(bool Visible);

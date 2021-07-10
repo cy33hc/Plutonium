@@ -18,20 +18,6 @@ namespace pu::ui::render
     {
         if(!this->initialized)
         {
-            this->okromfs = false;
-            if(this->initopts.InitRomFs)
-            {
-                Result rc = romfsInit();
-                this->okromfs = R_SUCCEEDED(rc);
-            }
-
-            this->okpl = false;
-            if(this->initopts.InitPL)
-            {
-                Result rc = plInitialize(PlServiceType_User);
-                this->okpl = R_SUCCEEDED(rc);
-            }
-
             SDL_Init(this->initopts.SDLFlags);
             g_window = SDL_CreateWindow("Plutonium-SDL2", 0, 0, this->initopts.Width, this->initopts.Height, 0);
             g_renderer = SDL_CreateRenderer(g_window, -1, this->initopts.RenderFlags);
@@ -90,8 +76,6 @@ namespace pu::ui::render
             if(this->initopts.InitTTF) TTF_Quit();
             if(this->initopts.InitIMG) IMG_Quit();
             if(this->initopts.InitMixer) Mix_CloseAudio();
-            if(this->okpl) plExit();
-            if(this->okromfs) romfsExit();
             SDL_DestroyRenderer(g_renderer);
             SDL_FreeSurface(g_windowsrf);
             SDL_DestroyWindow(g_window);
@@ -268,10 +252,12 @@ namespace pu::ui::render
     static inline bool AddSharedFontImpl(std::shared_ptr<ttf::Font> &font, PlSharedFontType type)
     {
         // Let's assume pl services are initialized, and return if anything unexpected happens
+        /*
         PlFontData data = {};
         auto rc = plGetSharedFontByType(&data, type);
         if(R_FAILED(rc)) return false;
         if(!ttf::Font::IsValidFontFaceIndex(font->LoadFromMemory(data.address, data.size, pu::ttf::EmptyFontFaceDisposingFunction))) return false;
+        */
         return true;
     }
 
@@ -319,7 +305,7 @@ namespace pu::ui::render
             }
         }
         auto font = std::make_shared<ttf::Font>(font_size);
-        if(!ttf::Font::IsValidFontFaceIndex(font->LoadFromFile(path))) return;
+        //if(!ttf::Font::IsValidFontFaceIndex(font->LoadFromFile(path))) return;
         g_font_list.push_back(std::make_pair(font_name, std::move(font)));
     }
 

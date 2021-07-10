@@ -12,6 +12,7 @@
 */
 
 #pragma once
+#include <pu/types.h>
 #include <pu/pu_Macros.hpp>
 #include <string>
 #include <array>

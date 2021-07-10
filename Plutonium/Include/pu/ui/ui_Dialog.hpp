@@ -15,6 +15,7 @@
 #include <pu/pu_String.hpp>
 #include <pu/ui/render/render_Renderer.hpp>
 #include <vector>
+#include <vitasdk.h>
 
 namespace pu::ui
 {

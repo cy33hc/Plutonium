@@ -1,132 +1,37 @@
-#---------------------------------------------------------------------------------
-.SUFFIXES:
-#---------------------------------------------------------------------------------
+TARGET		:= libpu
 
-ifeq ($(strip $(DEVKITPRO)),)
-$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>/devkitpro")
-endif
+LIBS = -lvita2d -lc -lSceCommonDialog_stub -lSceLibKernel_stub \
+	-lSceDisplay_stub -lSceGxm_stub -lSceSysmodule_stub -lSceCtrl_stub \
+	-lSceTouch_stub -lm -lSceAppMgr_stub -lSceAppUtil_stub  -lSceShaccCg_stub
 
-include $(DEVKITPRO)/devkitA64/base_rules
-include $(DEVKITPRO)/libnx/switch_rules
+CPPSOURCES	:= Source Source/pu Source/pu/audio Source/pu/ui Source/pu/ttf Source/pu/ui/elm Source/pu/ui/extras Source/pu/ui/render Source/pu/web
+CSOURCES := Source/pu/sdl2
+ASMSOURCES := .
+INCLUDES        := Include
+ASMFILES	:= $(foreach dir,$(ASMSOURCES), $(wildcard $(dir)/*.S))
+CPPFILES   := $(foreach dir,$(CPPSOURCES), $(wildcard $(dir)/*.cpp))
+CFILES := $(foreach dir,$(CSOURCES), $(wildcard $(dir)/*.c))
+BINFILES := $(foreach dir,$(DATA), $(wildcard $(dir)/*.bin))
+OBJS     := $(addsuffix .o,$(BINFILES)) $(ASMFILES:.S=.o) $(CFILES:.c=.o) $(CPPFILES:.cpp=.o)
 
-#---------------------------------------------------------------------------------
-# TARGET is the name of the output
-# SOURCES is a list of directories containing source code
-# DATA is a list of directories containing data files
-# INCLUDES is a list of directories containing header files
-#---------------------------------------------------------------------------------
-BUILD		:=	build
-TARGET		:=  pu
-SOURCES		:=	Source Source/pu Source/pu/audio Source/pu/ui Source/pu/ttf Source/pu/sdl2 Source/pu/ui/elm Source/pu/ui/extras Source/pu/ui/render Source/pu/web
-INCLUDES	:=	Include
+PREFIX  = arm-vita-eabi
+CC      = $(PREFIX)-gcc
+CXX      = $(PREFIX)-g++
+CFLAGS  = -IInclude -I/usr/local/vitasdk/arm-vita-eabi/include/freetype2 -Wl,-q -O2 -g -mtune=cortex-a9 -mfpu=neon -ftree-vectorize
+CXXFLAGS  = $(CFLAGS) -fno-exceptions -std=gnu++17
+ASFLAGS = $(CFLAGS)
+AR      = $(PREFIX)-gcc-ar
 
-#---------------------------------------------------------------------------------
-# options for code generation
-#---------------------------------------------------------------------------------
-ARCH	:=	-march=armv8-a -mtune=cortex-a57 -mtp=soft -fPIC -ftls-model=local-exec
+all: $(TARGET).a
 
-CFLAGS	:=	-g -w -D__SWITCH__ \
-			-ffunction-sections \
-			-fdata-sections \
-			$(ARCH) \
+$(TARGET).a: $(OBJS)
+	$(AR) -rc $@ $^
 
-CFLAGS	+=	$(INCLUDE) -I$(PORTLIBS)/include/freetype2 -DPU_MAJOR=$(PU_MAJOR) -DPU_MINOR=$(PU_MINOR) -DPU_MICRO=$(PU_MICRO) -DPU_VERSION=\"$(PU_MAJOR).$(PU_MINOR).$(PU_MICRO)\"
+install: $(TARGET).a
+	@mkdir -p $(VITASDK)/$(PREFIX)/lib/
+	cp $(TARGET).a $(VITASDK)/$(PREFIX)/lib/
+	@mkdir -p $(VITASDK)/$(PREFIX)/include
+	cp -R Include/* $(VITASDK)/$(PREFIX)/include
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++17
-
-ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=${DEVKITPRO}/libnx/switch.specs -g $(ARCH) -Wl,-r,-Map,$(notdir $*.map)
-
-SDL_IMAGE_LIBS	:= -lSDL2_image -lpng -ljpeg
-SDL_GFX_LIBS	:= -lSDL2_gfx
-SDL_MIXER_LIBS	:= -lSDL2_mixer -lmodplug -lmpg123 -lvorbisidec -logg
-
-LIBS	:=  $(SDL_IMAGE_LIBS) $(SDL_GFX_LIBS) $(SDL_MIXER_LIBS) -lEGL -lGLESv2 -lglapi `sdl2-config --libs` `freetype-config --libs`
-
-#---------------------------------------------------------------------------------
-# list of directories containing libraries, this must be the top level containing
-# include and lib
-#---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(LIBNX)
-
-#---------------------------------------------------------------------------------
-# no real need to edit anything past this point unless you need to add additional
-# rules for different file extensions
-#---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
-#---------------------------------------------------------------------------------
-
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-			$(foreach dir,$(DATA),$(CURDIR)/$(dir))
-
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
-
-#---------------------------------------------------------------------------------
-# use CXX for linking C++ projects, CC for standard C
-#---------------------------------------------------------------------------------
-ifeq ($(strip $(CPPFILES)),)
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CC)
-#---------------------------------------------------------------------------------
-else
-#---------------------------------------------------------------------------------
-	export LD	:=	$(CXX)
-#---------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------
-export OUTPUT       := $(CURDIR)/Output/lib/lib$(TARGET).a
-export DEPSDIR      := $(CURDIR)/$(BUILD)
-export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES))
-export OFILES_SRC	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
-export OFILES 	:=	$(OFILES_BIN) $(OFILES_SRC)
-export HFILES	:=	$(addsuffix .h,$(subst .,_,$(BINFILES)))
-
-export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD)
-
-.PHONY: $(BUILD) clean all
-
-#---------------------------------------------------------------------------------
-all: $(BUILD)
-
-$(BUILD):
-	@[ -d $@ ] || mkdir -p $@
-	@[ -d Output/lib ] || mkdir -p Output/lib
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-	@rm -rf Output/include
-	@cp -r Include Output/include
-
-#---------------------------------------------------------------------------------
 clean:
-	@echo clean ...
-	@rm -fr $(CURDIR)/Output
-	@rm -fr $(BUILD) $(OUTPUT).a
-
-#---------------------------------------------------------------------------------
-else
-
-DEPENDS	:=	$(OFILES:.o=.d)
-
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
-$(OUTPUT)	:	$(OFILES)
-
-$(OFILES_SRC)	: $(HFILES)
-
-#---------------------------------------------------------------------------------
-%_bin.h %.bin.o	:	%.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
-
--include $(DEPENDS)
-
-#---------------------------------------------------------------------------------------
-endif
-#---------------------------------------------------------------------------------------
+	@rm -rf $(TARGET).a $(TARGET).elf $(OBJS)

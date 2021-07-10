@@ -2,9 +2,9 @@
 
 namespace pu::ui
 {
-    Layout::Layout() : Container(0, 0, 1280, 720)
+    Layout::Layout() : Container(0, 0, 960, 544)
     {
-        this->onipt = [&](u64,u64,u64,Touch){};
+        this->onipt = [&](SDL_Event&){};
         this->hasimage = false;
         this->overbgtex = nullptr;
         this->overbgcolor = Color(225, 225, 225, 255);
@@ -20,12 +20,12 @@ namespace pu::ui
         return !this->elms.empty();
     }
 
-    void Layout::SetOnInput(std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> Callback)
+    void Layout::SetOnInput(std::function<void(SDL_Event&)> Callback)
     {
         this->onipt = Callback;
     }
 
-    std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> Layout::GetOnInput()
+    std::function<void(SDL_Event&)> Layout::GetOnInput()
     {
         return this->onipt;
     }

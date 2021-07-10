@@ -30,7 +30,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/begin_code.h>
 
-#include <switch.h>
+#include <vitasdk.h>
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus

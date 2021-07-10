@@ -98,7 +98,7 @@ namespace pu::ui::elm
         Drawer->RenderTexture(this->ntex, rdx, rdy);
     }
 
-    void TextBlock::OnInput(u64 Down, u64 Up, u64 Held, Touch Pos)
+    void TextBlock::OnInput(SDL_Event &e)
     {
     }
 }

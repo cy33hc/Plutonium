@@ -36,7 +36,7 @@ namespace pu::ui::render
         bool InitPL;
         bool InitRomFs;
 
-        RendererInitOptions(u32 sdl_flags, u32 render_flags, u32 w = 1280, u32 h = 720) : SDLFlags(sdl_flags), RenderFlags(render_flags), Width(w), Height(h) {}
+        RendererInitOptions(u32 sdl_flags, u32 render_flags, u32 w = 960, u32 h = 544) : SDLFlags(sdl_flags), RenderFlags(render_flags), Width(w), Height(h) {}
 
         // Empty font path = using shared font
         inline RendererInitOptions WithTTF(String default_font_path = "")

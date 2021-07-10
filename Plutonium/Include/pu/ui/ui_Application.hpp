@@ -18,6 +18,7 @@
 #include <pu/ui/ui_Dialog.hpp>
 #include <pu/ui/ui_Layout.hpp>
 #include <pu/ui/ui_Overlay.hpp>
+#include <SDL2/SDL.h>
 
 namespace pu::ui
 {
@@ -40,7 +41,7 @@ namespace pu::ui
             virtual void OnLoad() = 0;
 
             void AddThread(std::function<void()> Callback);
-            void SetOnInput(std::function<void(u64 Down, u64 Up, u64 Held, Touch Pos)> Callback);
+            void SetOnInput(std::function<void(SDL_Event&)> Callback);
             i32 ShowDialog(Dialog::Ref &ToShow);
             int CreateShowDialog(String Title, String Content, std::vector<String> Options, bool UseLastOptionAsCancel, std::string Icon = "");
             
@@ -93,7 +94,7 @@ namespace pu::ui
             bool ffovl;
             Overlay::Ref ovl;
             std::vector<std::function<void()>> thds;
-            std::function<void(u64, u64, u64, Touch)> cbipt;
+            std::function<void(SDL_Event&)> cbipt;
             render::Renderer::Ref rend;
     };
 }

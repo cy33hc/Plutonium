@@ -2,7 +2,7 @@
 #pragma once
 
 #include <memory>
-#include <switch.h>
+#include <vitasdk.h>
 
 // Defines a static function (::New(...)) as a constructor for smart ptrs, also defines a custom type (::Ref) to simplify it
 #define PU_SMART_CTOR(type) \

@@ -37,7 +37,7 @@ namespace pu::ui::elm
             void SetImage(String Image);
             bool IsImageValid();
             void OnRender(render::Renderer::Ref &Drawer, i32 X, i32 Y);
-            void OnInput(u64 Down, u64 Up, u64 Held, Touch Pos);
+            void OnInput(SDL_Event&);
         private:
             String img;
             sdl2::Texture ntex;

@@ -13,7 +13,7 @@
 
 #pragma once
 #include <string>
-#include <switch.h>
+#include <vitasdk.h>
 #include <pu/pu_String.hpp>
 #include <pu/ui/ui_Types.hpp>
 #include <pu/sdl2/sdl2_Types.hpp>

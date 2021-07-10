@@ -13,7 +13,8 @@
 
 #pragma once
 #include <string>
-#include <switch.h>
+#include <vitasdk.h>
+#include <pu/types.h>
 #include <pu/pu_Macros.hpp>
 
 namespace pu

@@ -12,6 +12,7 @@
 */
 
 #pragma once
+#include <pu/types.h>
 #include <pu/ui/elm/elm_Element.hpp>
 #include <vector>
 
