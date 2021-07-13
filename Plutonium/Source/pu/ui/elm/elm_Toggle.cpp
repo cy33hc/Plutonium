@@ -9,7 +9,7 @@ namespace pu::ui::elm
         this->key = Key;
         this->cnt = Content;
         this->clr = Color;
-        this->fnt_name = "DefaultFont@25";
+        this->fnt_name = "DefaultFont@18";
         this->fsize = 25;
         this->togfact = 255;
         this->checked = false;

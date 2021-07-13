@@ -12,7 +12,7 @@ namespace pu::ui::elm
         this->clr = Color;
         this->hover = false;
         this->hoverfact = 255;
-        this->fnt_name = "DefaultFont@25";
+        this->fnt_name = "DefaultFont@18";
         this->ntex = render::RenderText(this->fnt_name, Content, TextColor);
         this->clickcb = [](){};
     }

@@ -7,7 +7,7 @@ namespace pu::ui::elm
         this->x = X;
         this->y = Y;
         this->text = Text;
-        this->fnt_name = "DefaultFont@25";
+        this->fnt_name = "DefaultFont@18";
         this->ntex = render::RenderText(this->fnt_name, Text, this->clr);
     }
 

@@ -33,8 +33,6 @@ namespace pu::ui::render
         u32 MixerFlags;
         bool InitIMG;
         u32 IMGFlags;
-        bool InitPL;
-        bool InitRomFs;
 
         RendererInitOptions(u32 sdl_flags, u32 render_flags, u32 w = 960, u32 h = 544) : SDLFlags(sdl_flags), RenderFlags(render_flags), Width(w), Height(h) {}
 
@@ -43,7 +41,6 @@ namespace pu::ui::render
         {
             this->InitTTF = true;
             if(default_font_path.HasAny()) this->DefaultFontPath = default_font_path;
-            else this->InitPL = true;
             return *this;
         }
 
@@ -64,12 +61,6 @@ namespace pu::ui::render
         {
             this->InitIMG = true;
             this->IMGFlags = flags;
-            return *this;
-        }
-
-        inline RendererInitOptions WithRomfs()
-        {
-            this->InitRomFs = true;
             return *this;
         }
     };

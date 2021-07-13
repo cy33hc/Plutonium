@@ -82,7 +82,7 @@ namespace pu::ttf
         public:
 
             static constexpr i32 InvalidFontFaceIndex = -1;
-            static constexpr u32 DefaultFontSize = 25;
+            static constexpr u32 DefaultFontSize = 18;
 
             static constexpr bool IsValidFontFaceIndex(i32 index)
             {

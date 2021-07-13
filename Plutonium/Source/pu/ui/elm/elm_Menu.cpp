@@ -91,7 +91,7 @@ namespace pu::ui::elm
         this->dtouch = false;
         this->fcs = { 40, 40, 40, 255 };
         this->basestatus = 0;
-        this->font_name = "DefaultFont@25";
+        this->font_name = "DefaultFont@18";
     }
 
     i32 Menu::GetX()
