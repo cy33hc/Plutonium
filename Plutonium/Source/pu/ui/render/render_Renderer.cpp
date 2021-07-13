@@ -249,50 +249,27 @@ namespace pu::ui::render
         return std::make_pair(static_cast<u32>(w), static_cast<u32>(h));
     }
 
-    static inline bool AddSharedFontImpl(std::shared_ptr<ttf::Font> &font, PlSharedFontType type)
-    {
-        // Let's assume pl services are initialized, and return if anything unexpected happens
-        /*
-        PlFontData data = {};
-        auto rc = plGetSharedFontByType(&data, type);
-        if(R_FAILED(rc)) return false;
-        if(!ttf::Font::IsValidFontFaceIndex(font->LoadFromMemory(data.address, data.size, pu::ttf::EmptyFontFaceDisposingFunction))) return false;
-        */
-        return true;
-    }
-
     void AddSharedFont(String font_name, u32 font_size, PlSharedFontType type)
     {
-        for(auto &[name, font]: g_font_list)
+        if (type==PlSharedFontType_Standard)
         {
-            if(name == font_name)
-            {
-                return;
-            }
+            AddFontFile(font_name, font_size, "sa0:/data/font/pvf/jpn0.pvf");
         }
-        
-        auto font = std::make_shared<ttf::Font>(font_size);
-        if(AddSharedFontImpl(font, type)) g_font_list.push_back(std::make_pair(font_name, std::move(font)));
+        else if (type==PlSharedFontType_Chinese)
+        {
+            AddFontFile(font_name, font_size, "sa0:/data/font/pvf/cn0.pvf");
+        }
+        else if (type==PlSharedFontType_KO)
+        {
+            AddFontFile(font_name, font_size, "sa0:/data/font/pvf/kr0.pvf");
+        }
     }
 
     void AddAllSharedFonts(String font_name, u32 font_size)
     {
-        for(auto &[name, font]: g_font_list)
-        {
-            if(name == font_name)
-            {
-                return;
-            }
-        }
-        
-        auto font = std::make_shared<ttf::Font>(font_size);
-        if(!AddSharedFontImpl(font, PlSharedFontType_Standard)) return;
-        if(!AddSharedFontImpl(font, PlSharedFontType_NintendoExt)) return;
-        if(!AddSharedFontImpl(font, PlSharedFontType_ChineseSimplified)) return;
-        if(!AddSharedFontImpl(font, PlSharedFontType_ExtChineseSimplified)) return;
-        if(!AddSharedFontImpl(font, PlSharedFontType_ChineseTraditional)) return;
-        if(!AddSharedFontImpl(font, PlSharedFontType_KO)) return;
-        g_font_list.push_back(std::make_pair(font_name, std::move(font)));
+        AddSharedFont(font_name, font_size, PlSharedFontType_Standard);
+        AddSharedFont(font_name, font_size, PlSharedFontType_Chinese);
+        AddSharedFont(font_name, font_size, PlSharedFontType_KO);
     }
 
     void AddFontFile(String font_name, u32 font_size, String path)
@@ -305,7 +282,10 @@ namespace pu::ui::render
             }
         }
         auto font = std::make_shared<ttf::Font>(font_size);
-        //if(!ttf::Font::IsValidFontFaceIndex(font->LoadFromFile(path))) return;
+        if (!ttf::Font::IsValidFontFaceIndex(font->LoadFromFile(path)))
+        {
+            return;
+        }
         g_font_list.push_back(std::make_pair(font_name, std::move(font)));
     }
 

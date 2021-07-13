@@ -6,9 +6,11 @@ CustomLayout::CustomLayout() : Layout::Layout()
 {
     // Create the TextBlock instance with the text we want
     this->helloText = pu::ui::elm::TextBlock::New(300, 300, "Press X to answer my question");
+    this->okButton = pu::ui::elm::Button::New(0, 0, 100, 20, "Test", pu::ui::Color::Color(255,255,255,255), pu::ui::Color::Color());
     
     // Add the instance to the layout. IMPORTANT! this MUST be done for them to be used, having them as members is not enough (just a simple way to keep them)
     this->Add(this->helloText);
+    this->Add(this->okButton);
 }
 
 void MainApplication::OnLoad()

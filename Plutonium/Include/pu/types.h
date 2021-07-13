@@ -17,11 +17,8 @@
  /// SharedFontType
  typedef enum {
      PlSharedFontType_Standard             = 0,  ///< Japan, US and Europe
-     PlSharedFontType_ChineseSimplified    = 1,  ///< Chinese Simplified
-     PlSharedFontType_ExtChineseSimplified = 2,  ///< Extended Chinese Simplified
-     PlSharedFontType_ChineseTraditional   = 3,  ///< Chinese Traditional
-     PlSharedFontType_KO                   = 4,  ///< Korean (Hangul)
-     PlSharedFontType_NintendoExt          = 5,  ///< Nintendo Extended. This font only has the special Nintendo-specific characters, which aren't available with the other fonts.
+     PlSharedFontType_Chinese              = 1,  ///< Chinese
+     PlSharedFontType_KO                   = 2,  ///< Korean (Hangul)
      PlSharedFontType_Total,                     ///< Total fonts supported by this enum.
  } PlSharedFontType;
 
