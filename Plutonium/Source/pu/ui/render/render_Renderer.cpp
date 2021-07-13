@@ -45,11 +45,11 @@ namespace pu::ui::render
                 {
                     for(auto size: DefaultFontSizes)
                     {
-                        AddDefaultFontFromShared(size);
+                        AddDefaultFontFromShared(size, this->initopts.fontType);
                     }
                     for(auto size: this->initopts.DefaultFontExtraSizes)
                     {
-                        AddDefaultFontFromShared(size);
+                        AddDefaultFontFromShared(size, this->initopts.fontType);
                     }
                 }
             }

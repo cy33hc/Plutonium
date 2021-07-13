@@ -27,6 +27,7 @@ namespace pu::ui::render
         u32 Width;
         u32 Height;
         bool InitTTF;
+        PlSharedFontType fontType;
         std::vector<u32> DefaultFontExtraSizes;
         String DefaultFontPath;
         bool InitMixer;
@@ -36,11 +37,17 @@ namespace pu::ui::render
 
         RendererInitOptions(u32 sdl_flags, u32 render_flags, u32 w = 960, u32 h = 544) : SDLFlags(sdl_flags), RenderFlags(render_flags), Width(w), Height(h) {}
 
-        // Empty font path = using shared font
         inline RendererInitOptions WithTTF(String default_font_path = "")
         {
             this->InitTTF = true;
             if(default_font_path.HasAny()) this->DefaultFontPath = default_font_path;
+            return *this;
+        }
+
+        inline RendererInitOptions WithSharedFont(PlSharedFontType type = PlSharedFontType_Standard)
+        {
+            this->InitTTF = true;
+            this->fontType = type;
             return *this;
         }
 
@@ -132,10 +139,10 @@ namespace pu::ui::render
     void AddAllSharedFonts(String font_name, u32 font_size);
     void AddFontFile(String font_name, u32 font_size, String path);
 
-    inline void AddDefaultFontFromShared(u32 font_size)
+    inline void AddDefaultFontFromShared(u32 font_size, PlSharedFontType type)
     {
         std::string font_name = "DefaultFont@" + std::to_string(font_size);
-        AddAllSharedFonts(font_name, font_size);
+        AddSharedFont(font_name, font_size, type);
     }
 
     inline void AddDefaultFontFromFile(u32 font_size, String path)
