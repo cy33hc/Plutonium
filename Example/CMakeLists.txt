@@ -29,6 +29,7 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
+  debugnet
   pu
   SDL2
   SDL2_mixer

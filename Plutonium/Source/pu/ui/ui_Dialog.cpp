@@ -1,6 +1,7 @@
 #include <pu/ui/ui_Dialog.hpp>
 #include <pu/ui/ui_Application.hpp>
 #include <SDL2/SDL.h>
+#include <debugnet.h>
 #include <cmath>
 
 namespace pu::ui
@@ -127,59 +128,65 @@ namespace pu::ui
             bool ok = reinterpret_cast<Application*>(App)->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool
             {
                 SDL_PollEvent(&e);
-                if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT)
+                debugNetPrintf(DEBUG,"e.type=%d\n",e.type);
+                if(e.type == SDL_JOYBUTTONUP)
                 {
-                    if(this->osel > 0)
+                    debugNetPrintf(DEBUG,"e.jbutton.button=%d\n",e.jbutton.button);
+                    if(e.jbutton.button == CTRL_LEFT)
                     {
-                        this->prevosel = this->osel;
-                        this->osel--;
+                        if(this->osel > 0)
+                        {
+                            this->prevosel = this->osel;
+                            this->osel--;
+                            for(i32 i = 0; i < this->opts.size(); i++)
+                            {
+                                if(i == this->osel) this->selfact = 0;
+                                else if(i == this->prevosel) this->pselfact = 255;
+                            }
+                        }
+                    }
+                    else if(e.jbutton.button == CTRL_RIGHT)
+                    {
+                        if(this->osel < (this->opts.size() - 1))
+                        {
+                            this->prevosel = this->osel;
+                            this->osel++;
+                            for(i32 i = 0; i < this->opts.size(); i++)
+                            {
+                                if(i == this->osel) this->selfact = 0;
+                                else if(i == this->prevosel) this->pselfact = 255;
+                            }
+                        }
+                    }
+                    else if(e.jbutton.button == CTRL_CIRCLE)
+                    {
+                        this->cancel = false;
+                        end = true;
+                    }
+                    else if(e.jbutton.button == CTRL_CROSS)
+                    {
+                        this->cancel = true;
+                        end = true;
+                    }/*
+                    else if(hidKeysDown(CONTROLLER_HANDHELD) & KEY_TOUCH)
+                    {
+                        touchPosition tch;
+                        hidTouchRead(&tch, 0);
                         for(i32 i = 0; i < this->opts.size(); i++)
                         {
-                            if(i == this->osel) this->selfact = 0;
-                            else if(i == this->prevosel) this->pselfact = 255;
+                            String txt = this->sopts[i];
+                            i32 rx = elx + ((elemw + 20) * i);
+                            i32 ry = ely;
+                            if(((rx + elemw) > tch.px) && (tch.px > rx) && ((ry + elemh) > tch.py) && (tch.py > ry))
+                            {
+                                this->osel = i;
+                                this->cancel = false;
+                                end = true;
+                            }
                         }
-                    }
+                    }*/
                 }
-                else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT)
-                {
-                    if(this->osel < (this->opts.size() - 1))
-                    {
-                        this->prevosel = this->osel;
-                        this->osel++;
-                        for(i32 i = 0; i < this->opts.size(); i++)
-                        {
-                            if(i == this->osel) this->selfact = 0;
-                            else if(i == this->prevosel) this->pselfact = 255;
-                        }
-                    }
-                }
-                else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-                {
-                    this->cancel = false;
-                    end = true;
-                }
-                else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-                {
-                    this->cancel = true;
-                    end = true;
-                }/*
-                else if(hidKeysDown(CONTROLLER_HANDHELD) & KEY_TOUCH)
-                {
-                    touchPosition tch;
-                    hidTouchRead(&tch, 0);
-                    for(i32 i = 0; i < this->opts.size(); i++)
-                    {
-                        String txt = this->sopts[i];
-                        i32 rx = elx + ((elemw + 20) * i);
-                        i32 ry = ely;
-                        if(((rx + elemw) > tch.px) && (tch.px > rx) && ((ry + elemh) > tch.py) && (tch.py > ry))
-                        {
-                            this->osel = i;
-                            this->cancel = false;
-                            end = true;
-                        }
-                    }
-                }*/
+                e.type = -1;
                 i32 bw = dw;
                 i32 bh = dh;
                 i32 fw = bw - (r * 2);

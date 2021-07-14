@@ -1,4 +1,5 @@
 #include <MainApplication.hpp>
+#include <debugnet.h>
 
 /*
 
@@ -16,9 +17,15 @@ extern "C" void userAppExit()
 
 */
 
+#define ip_server "192.168.100.14"
+#define port_server 18194
+
 // Main entrypoint
 int main()
 {
+    int ret;
+    ret = debugNetInit(ip_server,port_server,DEBUG);
+    debugNetPrintf(DEBUG,"Test debug level %d\n",ret);
     // First create our renderer, where one can customize SDL or other stuff's initialization.
     auto renderer = pu::ui::render::Renderer::New(pu::ui::render::RendererInitOptions(SDL_INIT_EVERYTHING, pu::ui::render::RendererHardwareFlags).WithIMG(pu::ui::render::IMGAllFlags).WithMixer(pu::ui::render::MixerAllFlags).WithSharedFont());
 

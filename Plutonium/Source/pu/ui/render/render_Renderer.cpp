@@ -8,6 +8,8 @@ namespace pu::ui::render
     static sdl2::Renderer g_renderer = nullptr;
     static sdl2::Window g_window = nullptr;
     static sdl2::Surface g_windowsrf = nullptr;
+    static sdl2::Controller g_controller = nullptr;
+    static sdl2::Joystick g_joystick = nullptr;
 
     // Global font object
     static std::vector<std::pair<String, std::shared_ptr<ttf::Font>>> g_font_list;
@@ -24,6 +26,9 @@ namespace pu::ui::render
             g_windowsrf = SDL_GetWindowSurface(g_window);
             SDL_SetRenderDrawBlendMode(g_renderer, SDL_BLENDMODE_BLEND);
             SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+
+            g_controller = SDL_GameControllerOpen(0);
+            g_joystick = SDL_GameControllerGetJoystick(g_controller);
 
             if(this->initopts.InitIMG) IMG_Init(this->initopts.IMGFlags);
 
@@ -76,6 +81,8 @@ namespace pu::ui::render
             if(this->initopts.InitTTF) TTF_Quit();
             if(this->initopts.InitIMG) IMG_Quit();
             if(this->initopts.InitMixer) Mix_CloseAudio();
+            SDL_JoystickClose(g_joystick);
+            SDL_GameControllerClose(g_controller);
             SDL_DestroyRenderer(g_renderer);
             SDL_FreeSurface(g_windowsrf);
             SDL_DestroyWindow(g_window);
