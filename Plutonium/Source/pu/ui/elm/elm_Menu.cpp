@@ -90,7 +90,6 @@ namespace pu::ui::elm
         this->icdown = false;
         this->dtouch = false;
         this->fcs = { 40, 40, 40, 255 };
-        this->basestatus = 0;
         this->font_name = "DefaultFont@18";
     }
 
@@ -334,16 +333,7 @@ namespace pu::ui::elm
     void Menu::OnInput(SDL_Event &e)
     {
         if(itms.empty()) return;
-        if(basestatus == 1)
-        {
-            auto curtime = std::chrono::steady_clock::now();
-            auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(curtime - basetime).count();
-            if(diff >= 150)
-            {
-                basestatus = 2;
-            }
-        }
-        if(e.type == SDL_FINGERDOWN)
+        if(e.type == SDL_FINGERUP)
         {
             i32 cx = this->GetProcessedX();
             i32 cy = this->GetProcessedY();
@@ -378,109 +368,69 @@ namespace pu::ui::elm
         }
         else
         {
-            if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN)
+            if(e.type == SDL_JOYBUTTONUP && e.jbutton.button == CTRL_DOWN)
             {
-                bool move = true;
-                /*
-                if(Held & KEY_RSTICK_DOWN)
+                if(this->isel < (this->itms.size() - 1))
                 {
-                    move = false;
-                    if(basestatus == 0)
+                    if((this->isel - this->fisel) == (this->ishow - 1))
                     {
-                        basetime = std::chrono::steady_clock::now();
-                        basestatus = 1;
-                    }
-                    else if(basestatus == 2)
-                    {
-                        basestatus = 0;
-                        move = true;
-                    }
-                }
-                */
-                if(move)
-                {
-                    if(this->isel < (this->itms.size() - 1))
-                    {
-                        if((this->isel - this->fisel) == (this->ishow - 1))
-                        {
-                            this->fisel++;
-                            this->isel++;
-                            (this->onselch)();
-                            ReloadItemRenders();
-                        }
-                        else
-                        {
-                            this->previsel = this->isel;
-                            this->isel++;
-                            (this->onselch)();
-                            if(!this->itms.empty()) for(i32 i = 0; i < this->itms.size(); i++)
-                            {
-                                if(i == this->isel) this->selfact = 0;
-                                else if(i == this->previsel) this->pselfact = 255;
-                            }
-                        }
+                        this->fisel++;
+                        this->isel++;
+                        (this->onselch)();
+                        ReloadItemRenders();
                     }
                     else
                     {
-                        this->isel = 0;
-                        this->fisel = 0;
-                        if(this->itms.size() >= this->ishow)
+                        this->previsel = this->isel;
+                        this->isel++;
+                        (this->onselch)();
+                        if(!this->itms.empty()) for(i32 i = 0; i < this->itms.size(); i++)
                         {
-                            ReloadItemRenders();
+                            if(i == this->isel) this->selfact = 0;
+                            else if(i == this->previsel) this->pselfact = 255;
                         }
+                    }
+                }
+                else
+                {
+                    this->isel = 0;
+                    this->fisel = 0;
+                    if(this->itms.size() >= this->ishow)
+                    {
+                        ReloadItemRenders();
                     }
                 }
             }
-            else if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP)
+            else if(e.type == SDL_JOYBUTTONUP && e.jbutton.button == CTRL_UP)
             {
-                bool move = true;
-                /*
-                if(Held & KEY_RSTICK_UP)
+                if(this->isel > 0)
                 {
-                    move = false;
-                    if(basestatus == 0)
+                    if(this->isel == this->fisel)
                     {
-                        basetime = std::chrono::steady_clock::now();
-                        basestatus = 1;
-                    }
-                    else if(basestatus == 2)
-                    {
-                        basestatus = 0;
-                        move = true;
-                    }
-                }
-                */
-                if(move)
-                {
-                    if(this->isel > 0)
-                    {
-                        if(this->isel == this->fisel)
-                        {
-                            this->fisel--;
-                            this->isel--;
-                            (this->onselch)();
-                            ReloadItemRenders();
-                        }
-                        else
-                        {
-                            this->previsel = this->isel;
-                            this->isel--;
-                            (this->onselch)();
-                            if(!this->itms.empty()) for(i32 i = 0; i < this->itms.size(); i++)
-                            {
-                                if(i == this->isel) this->selfact = 0;
-                                else if(i == this->previsel) this->pselfact = 255;
-                            }
-                        }
+                        this->fisel--;
+                        this->isel--;
+                        (this->onselch)();
+                        ReloadItemRenders();
                     }
                     else
                     {
-                        this->isel = this->itms.size() - 1;
-                        this->fisel = 0;
-                        if(this->itms.size() >= this->ishow) {
-                            this->fisel = this->itms.size() - this->ishow;
-                            ReloadItemRenders();
+                        this->previsel = this->isel;
+                        this->isel--;
+                        (this->onselch)();
+                        if(!this->itms.empty()) for(i32 i = 0; i < this->itms.size(); i++)
+                        {
+                            if(i == this->isel) this->selfact = 0;
+                            else if(i == this->previsel) this->pselfact = 255;
                         }
+                    }
+                }
+                else
+                {
+                    this->isel = this->itms.size() - 1;
+                    this->fisel = 0;
+                    if(this->itms.size() >= this->ishow) {
+                        this->fisel = this->itms.size() - this->ishow;
+                        ReloadItemRenders();
                     }
                 }
             }

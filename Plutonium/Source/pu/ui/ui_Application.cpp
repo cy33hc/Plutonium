@@ -161,18 +161,13 @@ namespace pu::ui
     {
         SDL_Event e;
         SDL_PollEvent(&e);
-        Touch tch = Touch::Empty;
-        /*
-        if(th & KEY_TOUCH)
-        {
-            touchPosition nxtch;
-            hidTouchRead(&nxtch, 0);
-            tch.X = nxtch.px;
-            tch.Y = nxtch.py;
-        }
-        */
+        auto tch = Touch::Empty;
+        
         auto simtch = this->lyt->GetSimulatedTouch();
-        if(!simtch.IsEmpty()) tch = simtch;
+        if(!simtch.IsEmpty()) {
+            tch = simtch;
+        }
+        
         if(!this->thds.empty()) for(i32 i = 0; i < this->thds.size(); i++) (this->thds[i])();
         this->lyt->PreRender();
         auto lyth = this->lyt->GetAllThreads();

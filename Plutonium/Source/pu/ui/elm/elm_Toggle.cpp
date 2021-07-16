@@ -135,6 +135,6 @@ namespace pu::ui::elm
 
     void Toggle::OnInput(SDL_Event &e)
     {
-        if(e.type == SDL_CONTROLLERBUTTONUP && e.cbutton.button == SDL_CONTROLLER_BUTTON_A) this->checked = !this->checked;
+        if(e.type == SDL_JOYBUTTONUP && e.jbutton.button == CTRL_CROSS) this->checked = !this->checked;
     }
 }

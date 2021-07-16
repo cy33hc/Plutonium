@@ -79,6 +79,7 @@ namespace pu::ui
             void OnRender();
             void Close();
             void CloseWithFadeOut();
+
         protected:
             bool loaded;
             bool rover;

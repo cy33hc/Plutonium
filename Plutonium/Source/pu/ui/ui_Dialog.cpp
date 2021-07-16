@@ -122,10 +122,10 @@ namespace pu::ui
         bool end = false;
         i32 initfact = 0;
         SDL_Event e;
-
+        auto app_ref = reinterpret_cast<Application*>(App);
         while(true)
         {
-            bool ok = reinterpret_cast<Application*>(App)->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool
+            bool ok = app_ref->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool
             {
                 SDL_PollEvent(&e);
                 debugNetPrintf(DEBUG,"e.type=%d\n",e.type);
@@ -167,25 +167,24 @@ namespace pu::ui
                     {
                         this->cancel = true;
                         end = true;
-                    }/*
-                    else if(hidKeysDown(CONTROLLER_HANDHELD) & KEY_TOUCH)
+                    }
+                    if(e.type == SDL_FINGERUP)
                     {
-                        touchPosition tch;
-                        hidTouchRead(&tch, 0);
                         for(i32 i = 0; i < this->opts.size(); i++)
                         {
                             String txt = this->sopts[i];
                             i32 rx = elx + ((elemw + 20) * i);
                             i32 ry = ely;
-                            if(((rx + elemw) > tch.px) && (tch.px > rx) && ((ry + elemh) > tch.py) && (tch.py > ry))
+                            if(((rx + elemw) > e.tfinger.x) && (e.tfinger.x > rx) && ((ry + elemh) > e.tfinger.y) && (e.tfinger.y > ry))
                             {
                                 this->osel = i;
                                 this->cancel = false;
                                 end = true;
                             }
                         }
-                    }*/
+                    }
                 }
+
                 e.type = -1;
                 i32 bw = dw;
                 i32 bh = dh;
@@ -260,7 +259,7 @@ namespace pu::ui
             });
             if(!ok)
             {
-                ((Application*)App)->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool {});
+                app_ref->CallForRenderWithRenderOver([&](render::Renderer::Ref &Drawer) -> bool {});
                 break;
             }
         }
